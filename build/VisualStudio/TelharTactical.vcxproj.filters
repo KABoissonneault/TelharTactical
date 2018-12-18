@@ -13,10 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\sdl">
+      <UniqueIdentifier>{fa720936-9833-4642-b020-397658ddbb66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sdl">
+      <UniqueIdentifier>{5ecdc868-bcfd-43d2-a7cb-77b42f870269}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\sdl\resource.cpp">
+      <Filter>Source Files\sdl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\sdl\resource.h">
+      <Filter>Header Files\sdl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\sdl\macro.h">
+      <Filter>Header Files\sdl</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -46,6 +46,7 @@
     <Import Project="ProjectRoot.props" />
     <Import Project="SDL.props" />
     <Import Project="GSL.props" />
+    <Import Project="SDL_Image.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -64,6 +65,10 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectRoot)res $(ProjectDir)res /I /S /D /Y 
+%(Command)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -83,14 +88,28 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectRoot)res $(ProjectDir)res /I /S /D /Y 
+%(Command)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\command_args.cpp" />
+    <ClCompile Include="..\..\src\game\map.cpp" />
+    <ClCompile Include="..\..\src\game\tileset.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\sdl\resource.cpp" />
+    <ClCompile Include="..\..\src\sdl\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\command_args.h" />
+    <ClInclude Include="..\..\src\game\map.h" />
+    <ClInclude Include="..\..\src\game\tile.h" />
+    <ClInclude Include="..\..\src\game\tileset.h" />
+    <ClInclude Include="..\..\src\math\vector2.h" />
     <ClInclude Include="..\..\src\sdl\macro.h" />
     <ClInclude Include="..\..\src\sdl\resource.h" />
+    <ClInclude Include="..\..\src\sdl\texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

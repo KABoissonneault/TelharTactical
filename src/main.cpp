@@ -1,57 +1,14 @@
 #include "sdl/resource.h"
 #include "sdl/macro.h"
+#include "command_args.h"
+
+#include "game/map.h"
 
 #include <SDL.h>
+#include <SDL_image.h>
 
-#include <optional>
-#include <gsl/span>
 #include <gsl/gsl_util>
-#include <string_view>
 #include <cstdio>
-
-#include <string>
-using namespace std::string_literals;
-
-struct displacement {
-    int x, y;
-};
-
-struct command_args {
-    std::optional<displacement> window_size;
-    bool print_video_drivers = false;
-};
-
-auto parse_window_size(gsl::span<char const* const> args) -> displacement {
-    if(args.size() < 2 || args[0][0] == '-' || args[1][0] == '-') {
-        throw std::invalid_argument("Missing arguments after '--window_size'");
-    }
-
-    char* arg_end;
-    int const x = std::strtol(args[0], &arg_end, 10);
-    if(arg_end == args[0]) {
-        throw std::invalid_argument("First argument to '--window_size' was not an integer: "s + args[0]);
-    }
-    int const y = std::strtol(args[1], &arg_end, 10);
-    if(arg_end == args[1]) {
-        throw std::invalid_argument("Second argument to '--window_size' was not an integer: "s + args[1]);
-    }
-
-    return {x, y};
-}
-
-auto parse_args(gsl::span<char const* const> args) -> command_args {
-    command_args result;
-    for(int i = 0; i < args.size(); ++i) {
-        std::string_view const arg = args[i];
-        if(arg == "--window_size") {
-            result.window_size = parse_window_size(args.subspan(i + 1));
-            i += 2;
-        } else if(arg == "--print-video-drivers") {
-            result.print_video_drivers = true;
-        }
-    }
-    return result;
-}
 
 void print_video_drivers() {
     int const num_video_drivers = SDL_GetNumVideoDrivers();
@@ -71,25 +28,73 @@ struct sdl_video_resources {
 };
 
 auto initialize_sdl_video(command_args const& args) -> sdl_video_resources {
-    displacement const window_size = args.window_size.value_or(displacement{1280, 720});
+    auto const window_size = args.window_size.value_or(math::vector2i{1280, 720});
     SDL_Window* window;
     SDL_Renderer* renderer;
     KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, 0, &window, &renderer));
     return {sdl::unique_window(window), sdl::unique_renderer(renderer)};
 }
 
-void run_loop(sdl_video_resources video) {
-    bool quit = false;
-    while(!quit) {
-        SDL_Event e;
-        while(SDL_PollEvent(&e)) {
-            switch(e.type) {
-                case SDL_QUIT:
-                    quit = true;
-                    break;
+bool is_quit_event(SDL_Event const& e) {
+    return e.type == SDL_QUIT || e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE;
+}
+
+void run_loop(command_args const& args) {
+    // Init
+    sdl_video_resources const video = initialize_sdl_video(args);
+    auto const renderer = video.renderer.get();
+
+    SDL_Texture* tileset = IMG_LoadTexture(renderer, "res/test_tileset.png");
+    KT_SDL_FAILURE_IF(tileset == nullptr);
+   
+    game::tileset test_tileset{tileset};
+    game::map_chunk const chunks[]{ { 
+            game::tile_chunk {  
+                0, 0, 1, 0,
+                1, 2, 2, 3,
+                0, 2, 0, 1,
+                3, 0, 3, 3,
+            }, {
+                0, 0
+            }
+        }, {
+            game::tile_chunk {
+                0, 2, 2, 3,
+                3, 3, 2, 3,
+                0, 3, 2, 3,
+                3, 3, 3, 3,
+            }, {
+                1, 0
+            }
+        }, {
+            game::tile_chunk {
+                3, 2, 2, 3,
+                1, 1, 1, 1,
+                1, 0, 0, 1,
+                1, 1, 1, 1,
+            }, {
+                1, 1
             }
         }
-        KT_SDL_ENSURE(SDL_RenderClear(video.renderer.get()));
+    };
+    game::map map(std::move(test_tileset), chunks);
+
+    bool quit = false;
+    while(!quit) {
+        // Event
+        SDL_Event e;
+        while(SDL_PollEvent(&e)) {
+            if(is_quit_event(e)) {
+                quit = true;
+            }
+        }
+
+        // Update
+
+        // Render
+        KT_SDL_ENSURE(SDL_RenderClear(renderer));
+        map.render(renderer);
+        SDL_RenderPresent(renderer);
     }
 }
 
@@ -103,11 +108,14 @@ int main(int argc, char** argv) try {
     KT_SDL_ENSURE(SDL_Init(SDL_INIT_VIDEO));
     auto const sdl_destroy = gsl::finally(&SDL_Quit);
 
+    KT_SDL_ENSURE(IMG_Init(IMG_INIT_PNG));
+    auto const img_destroy = gsl::finally(&IMG_Quit);
+
     if(args.print_video_drivers) {
         print_video_drivers();
     }
 
-    run_loop(initialize_sdl_video(args));
+    run_loop(args);
 
     return EXIT_SUCCESS;
 } catch(std::exception const& e) {

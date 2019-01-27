@@ -47,38 +47,6 @@ void run_loop(command_args const& args) {
     SDL_Texture* tileset = IMG_LoadTexture(renderer, "res/test_tileset.png");
     KT_SDL_FAILURE_IF(tileset == nullptr);
    
-    game::tileset test_tileset{tileset};
-    game::map_chunk const chunks[]{ { 
-            game::tile_chunk {  
-                0, 0, 1, 0,
-                1, 2, 2, 3,
-                0, 2, 0, 1,
-                3, 0, 3, 3,
-            }, {
-                0, 0
-            }
-        }, {
-            game::tile_chunk {
-                0, 2, 2, 3,
-                3, 3, 2, 3,
-                0, 3, 2, 3,
-                3, 3, 3, 3,
-            }, {
-                1, 0
-            }
-        }, {
-            game::tile_chunk {
-                3, 2, 2, 3,
-                1, 1, 1, 1,
-                1, 0, 0, 1,
-                1, 1, 1, 1,
-            }, {
-                1, 1
-            }
-        }
-    };
-    game::map map(std::move(test_tileset), chunks);
-
     bool quit = false;
     while(!quit) {
         // Event
@@ -93,7 +61,6 @@ void run_loop(command_args const& args) {
 
         // Render
         KT_SDL_ENSURE(SDL_RenderClear(renderer));
-        map.render(renderer);
         SDL_RenderPresent(renderer);
     }
 }

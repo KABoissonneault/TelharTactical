@@ -1,17 +1,20 @@
 #pragma once
 
-#include "tileset.h"
+#include <vector>
 
-#include <array>
+#include "math/vector2.h"
 
 namespace game {
-    constexpr size_t chunk_length = 4;
-
     struct tile {
-        tileset_index index;
+        static constexpr math::vector2i dimensions{32, 32}; // pixels
+        enum class id {};
+        id data;
     };
 
     struct tile_chunk {
-        std::array<std::array<tile, chunk_length>, chunk_length> tiles;
+        static constexpr math::vector2i dimensions{16, 16}; // tiles
+
+        math::vector2i position;
+        std::vector<tile> tiles;
     };
 }

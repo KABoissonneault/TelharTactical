@@ -1,29 +1,14 @@
 #pragma once
 
-#include "tile.h"
-#include "tileset.h"
-
-struct SDL_Renderer;
+#include "layer.h"
 
 namespace game {
-    struct map_chunk {
-        tile_chunk chunk;
-        math::vector2i position;
+    struct tileset {
+        std::string source;
     };
-    
-    class map {
-    public:
-        map() = default;
-        template<typename MapChunkRange>
-        map(tileset tileset, MapChunkRange&& map_chunks)
-            : tileset(std::move(tileset))
-            , chunks(std::begin(map_chunks), std::end(map_chunks)) {
 
-        }
-        void render(SDL_Renderer* renderer);
-
-    private:        
-        tileset tileset;
-        std::vector<map_chunk> chunks;
+    struct map {
+        std::vector<layer> layers;
+        std::vector<tileset> tilesets;
     };
 }

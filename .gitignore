@@ -1,3 +1,7 @@
 build/VisualStudio/.vs/
 build/VisualStudio/x64/
 ext/SDL/bin/
+build/VisualStudio/Main/x64/
+build/VisualStudio/TelharTactical/x64/
+build/VisualStudio/Test/x64/
+build/VisualStudio/res/

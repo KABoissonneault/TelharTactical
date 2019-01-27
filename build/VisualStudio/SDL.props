@@ -9,7 +9,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SDLDir)include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDLDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SDLDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>

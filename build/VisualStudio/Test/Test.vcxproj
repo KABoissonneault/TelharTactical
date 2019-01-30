@@ -55,6 +55,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectRoot)test\ext\include;$(ProjectRoot)src;$(ExtDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -67,6 +69,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectRoot)test\ext\include;$(ProjectRoot)src;$(ExtDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -78,6 +82,9 @@
     <ClCompile Include="..\..\..\test\src\serial\tiled.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppLib\AppLib.vcxproj">
+      <Project>{b2c052df-3b47-4fd4-a03f-849765aa5de3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TelharTactical\TelharTactical.vcxproj">
       <Project>{7a19e9d5-6772-45e3-b2d3-a00fef3f08f5}</Project>
     </ProjectReference>

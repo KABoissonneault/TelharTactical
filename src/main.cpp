@@ -3,65 +3,90 @@
 #include "command_args.h"
 
 #include "game/map.h"
+#include "serial/tiled.h"
 
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include <fmt/format.h>
+
 #include <gsl/gsl_util>
 #include <cstdio>
+#include <fstream>
 
-void print_video_drivers() {
-    int const num_video_drivers = SDL_GetNumVideoDrivers();
-    if(num_video_drivers < 0) {
-        std::printf("SDL Video Drivers could not be queried: %s", SDL_GetError());
-        return;
+namespace {
+    void print_video_drivers() {
+        int const num_video_drivers = SDL_GetNumVideoDrivers();
+        if(num_video_drivers < 0) {
+            std::printf("SDL Video Drivers could not be queried: %s", SDL_GetError());
+            return;
+        }
+        std::printf("Video drivers (current: '%s'):\n", SDL_GetCurrentVideoDriver());
+        for(int i = 0; i < num_video_drivers; ++i) {
+            std::printf("\t(%d) %s\n", i, SDL_GetVideoDriver(i));
+        }
     }
-    std::printf("Video drivers (current: '%s'):\n", SDL_GetCurrentVideoDriver());
-    for(int i = 0; i < num_video_drivers; ++i) {
-        std::printf("\t(%d) %s\n", i, SDL_GetVideoDriver(i));
+
+    struct sdl_video_resources {
+        sdl::unique_window window;
+        sdl::unique_renderer renderer;
+    };
+
+    auto initialize_sdl_video(command_args const& args) -> sdl_video_resources {
+        auto const window_size = args.window_size.value_or(math::vector2i{1280, 720});
+        SDL_Window* window;
+        SDL_Renderer* renderer;
+        KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, 0, &window, &renderer));
+        return {sdl::unique_window(window), sdl::unique_renderer(renderer)};
     }
-}
 
-struct sdl_video_resources {
-    sdl::unique_window window;
-    sdl::unique_renderer renderer;
-};
+    struct game_data {
+        game::map map;
+    };
 
-auto initialize_sdl_video(command_args const& args) -> sdl_video_resources {
-    auto const window_size = args.window_size.value_or(math::vector2i{1280, 720});
-    SDL_Window* window;
-    SDL_Renderer* renderer;
-    KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, 0, &window, &renderer));
-    return {sdl::unique_window(window), sdl::unique_renderer(renderer)};
-}
-
-bool is_quit_event(SDL_Event const& e) {
-    return e.type == SDL_QUIT || e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE;
-}
-
-void run_loop(command_args const& args) {
-    // Init
-    sdl_video_resources const video = initialize_sdl_video(args);
-    auto const renderer = video.renderer.get();
-
-    SDL_Texture* tileset = IMG_LoadTexture(renderer, "res/test_tileset.png");
-    KT_SDL_FAILURE_IF(tileset == nullptr);
-   
-    bool quit = false;
-    while(!quit) {
-        // Event
-        SDL_Event e;
-        while(SDL_PollEvent(&e)) {
-            if(is_quit_event(e)) {
-                quit = true;
-            }
+    auto load_game_data() -> game_data {
+        std::ifstream map("res/test_infinite_map.json");
+        if(!map) {
+            throw std::runtime_error("Could not open 'res/test_infinite_map.json'");
         }
 
-        // Update
+        auto map_result = serial::load_tiled_json(map);
+        if(!map_result) {
+            throw std::runtime_error(fmt::format("Failed to load 'res/test_infinite_map.json' Tiled map: {}", map_result.error().description));
+        }
 
-        // Render
-        KT_SDL_ENSURE(SDL_RenderClear(renderer));
-        SDL_RenderPresent(renderer);
+        return game_data{*std::move(map_result)};
+    }
+
+    bool is_quit_event(SDL_Event const& e) {
+        return e.type == SDL_QUIT || e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE;
+    }
+
+    void run_loop(command_args const& args) {
+        // Init
+        sdl_video_resources const video = initialize_sdl_video(args);
+        auto const renderer = video.renderer.get();
+        game_data game = load_game_data();
+
+        SDL_Texture* tileset = IMG_LoadTexture(renderer, "res/test_tileset.png");
+        KT_SDL_FAILURE_IF(tileset == nullptr);
+
+        bool quit = false;
+        while(!quit) {
+            // Event
+            SDL_Event e;
+            while(SDL_PollEvent(&e)) {
+                if(is_quit_event(e)) {
+                    quit = true;
+                }
+            }
+
+            // Update
+
+            // Render
+            KT_SDL_ENSURE(SDL_RenderClear(renderer));
+            SDL_RenderPresent(renderer);
+        }
     }
 }
 

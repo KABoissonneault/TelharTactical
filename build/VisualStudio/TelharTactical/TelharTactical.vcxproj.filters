@@ -22,17 +22,6 @@
     <Filter Include="Header Files\math">
       <UniqueIdentifier>{ff87e0cc-e996-4005-931f-0594cb043a5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\serial">
-      <UniqueIdentifier>{5de0a179-529e-4d04-a3e2-cb16c82c1958}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\serial">
-      <UniqueIdentifier>{0a0512ea-93ff-4dc3-8a6a-d1ae07c0e953}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\serial\tiled.cpp">
-      <Filter>Source Files\serial</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\game\map.h">
@@ -43,12 +32,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\math\vector2.h">
       <Filter>Header Files\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\serial\error.h">
-      <Filter>Header Files\serial</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\src\serial\tiled.h">
-      <Filter>Header Files\serial</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\src\game\layer.h">
       <Filter>Header Files\game</Filter>

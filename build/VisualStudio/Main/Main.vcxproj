@@ -40,35 +40,41 @@
     <Import Project="..\ProjectRoot.props" />
     <Import Project="..\GSL.props" />
     <Import Project="..\SDL.props" />
+    <Import Project="..\fmt.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\ProjectRoot.props" />
     <Import Project="..\GSL.props" />
     <Import Project="..\SDL.props" />
+    <Import Project="..\fmt.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectRoot)src;$(ExtDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectRoot)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectRoot)src;$(ExtDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -78,16 +84,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\command_args.cpp" />
     <ClCompile Include="..\..\..\src\main.cpp" />
-    <ClCompile Include="..\..\..\src\sdl\resource.cpp" />
-    <ClCompile Include="..\..\..\src\sdl\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\command_args.h" />
-    <ClInclude Include="..\..\..\src\sdl\macro.h" />
-    <ClInclude Include="..\..\..\src\sdl\resource.h" />
-    <ClInclude Include="..\..\..\src\sdl\texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AppLib\AppLib.vcxproj">
+      <Project>{b2c052df-3b47-4fd4-a03f-849765aa5de3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\TelharTactical\TelharTactical.vcxproj">
       <Project>{7a19e9d5-6772-45e3-b2d3-a00fef3f08f5}</Project>
     </ProjectReference>

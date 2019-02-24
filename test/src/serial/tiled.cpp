@@ -37,3 +37,14 @@ TEST_CASE("Tiled valid map", "[serial]") {
     REQUIRE(std::all_of(middle_chunk.tiles.begin(), middle_chunk.tiles.end(), 
                         [] (game::tile t) { return static_cast<int>(t.data) >= 1 && static_cast<int>(t.data) <= 4; }));
 }
+
+TEST_CASE("Tiled valid tileset", "[serial]") {
+    std::fstream fs("res/test_tileset.json");
+    REQUIRE(fs);
+
+    auto const result = serial::get_tiled_tileset_image(fs);
+    REQUIRE(result);
+
+    auto const& image_file = *result;
+    REQUIRE(image_file == "test_tileset.png");
+}

@@ -7,6 +7,9 @@
 #include <string>
 #include <cctype>
 
+#include <SDL_render.h>
+#include <SDL_image.h>
+
 using namespace std::string_literals;
 
 namespace serial {
@@ -175,17 +178,41 @@ namespace serial {
     }
 
     auto load_tiled_json(std::istream& map_data) -> tl::expected<game::map, error> {
-        nlohmann::json json;
-        try {
-            if(!(map_data >> json)) {
-                return invalid_argument("Input stream was not a valid JSON");
-            }
-        } catch(std::exception const& e) {
-            return invalid_argument(e.what());
+        auto const json = nlohmann::json::parse(map_data, nullptr, false);
+        if(json.is_discarded()) {
+            return invalid_argument("Input stream was not a valid JSON");
         }
 
         return parse_map(json).map_error([] (error e) -> error {
             return {e.code, "Map parse error: " + e.description};
         });
+    }
+
+    namespace {
+
+    }
+
+    auto get_tiled_tileset_image(std::istream& tileset_data) -> tl::expected<std::string, error> {
+        auto const json = nlohmann::json::parse(tileset_data, nullptr, false);
+        if(json.is_discarded()) {
+            return invalid_argument("Input stream was not a valid JSON");
+        }
+
+        auto const width = json.find("tilewidth");
+        if(width == json.end() || *width != game::tile::dimensions.x) {
+            return invalid_argument(fmt::format("Tileset had invalid tile width: expected {}", game::tile::dimensions.x));
+        }
+
+        auto const height = json.find("tileheight");
+        if(height == json.end() || *height != game::tile::dimensions.y) {
+            return invalid_argument(fmt::format("Tileset had invalid tile height: expected {}", game::tile::dimensions.y));
+        }
+
+        auto const image = json.find("image");
+        if(image == json.end() || !image->is_string()) {
+            return invalid_argument("Invalid 'image' field");
+        }
+
+        return image->get<std::string>();
     }
 }

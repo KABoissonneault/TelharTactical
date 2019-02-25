@@ -74,4 +74,9 @@ namespace math {
     inline auto magnitude(vector2d v) -> double {
         return std::sqrt(std::pow(v.x, 2) + std::pow(v.y, 2));
     }
+
+    template<typename T, typename U>
+    inline auto element_multiply(vector2<T> lhs, vector2<U> rhs) -> vector2<decltype(std::declval<T>() * std::declval<U>())> {
+        return {lhs.x * rhs.x, lhs.y * rhs.y};
+    }
 }

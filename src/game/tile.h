@@ -7,7 +7,7 @@
 namespace game {
     struct tile {
         static constexpr math::vector2i dimensions{32, 32}; // pixels
-        enum class id {};
+        enum class id { none = 0 };
         id data;
     };
 

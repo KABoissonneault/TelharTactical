@@ -13,6 +13,7 @@
 #include <gsl/gsl_util>
 #include <cstdio>
 #include <fstream>
+#include <map>
 
 namespace {
     void print_video_drivers() {
@@ -36,7 +37,7 @@ namespace {
         auto const window_size = args.window_size.value_or(math::vector2i{1280, 720});
         SDL_Window* window;
         SDL_Renderer* renderer;
-        KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, 0, &window, &renderer));
+        KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, SDL_WINDOW_RESIZABLE, &window, &renderer));
         return {sdl::unique_window(window), sdl::unique_renderer(renderer)};
     }
 
@@ -58,18 +59,73 @@ namespace {
         return game_data{*std::move(map_result)};
     }
 
+    auto load_tilesets(gsl::span<game::tileset const> tilesets, SDL_Renderer & renderer) -> std::vector<sdl::texture> {
+        std::vector<sdl::texture> textures;
+        for(game::tileset const& tileset : tilesets) {
+            auto const tiled_tileset = "res/" + tileset.source;
+            auto tiled_data = std::ifstream(tiled_tileset);
+            if(!tiled_data) {
+                throw std::runtime_error(fmt::format("Failed to load Tiled tileset '{}'", tiled_tileset));
+            }
+            auto const result = serial::get_tiled_tileset_image(tiled_data);
+            if(!result) {
+                throw std::runtime_error(fmt::format("Could not find image data in Tiled tileset '{}': {}", tiled_tileset, result.error().description));
+            }
+            auto const& texture_path = *result;
+            auto const path = "res/" + texture_path;
+            auto const texture = IMG_LoadTexture(&renderer, path.c_str());
+            if(texture == nullptr) {
+                throw std::runtime_error(fmt::format("Failed to load tileset '{}'", path));
+            }
+            textures.emplace_back(texture);
+        }
+        return textures;
+    }
+
     bool is_quit_event(SDL_Event const& e) {
         return e.type == SDL_QUIT || e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE;
     }
+
+    void render_tile_layer(game::layer::tile_data const& tiles, sdl::texture & tileset, SDL_Renderer & renderer) {
+        for(game::tile_chunk const& chunk : tiles.chunks) {
+            auto const chunk_screen_position = element_multiply(chunk.position, game::tile::dimensions);
+            for(size_t tile_index = 0; tile_index < chunk.tiles.size(); ++tile_index) {
+                game::tile const tile = chunk.tiles[tile_index];
+                if(tile.data == game::tile::id::none) {
+                    continue;
+                }
+
+                auto const tileset_key = static_cast<int>(tile.data) - 1; // first real tile id is at 1
+                auto const tileset_tile_width = tileset.get_dimensions().x / game::tile::dimensions.x;
+                auto const tileset_coords = element_multiply(math::vector2i{tileset_key % tileset_tile_width, tileset_key / tileset_tile_width}, game::tile::dimensions);
+
+                auto const chunk_coords = math::vector2i{static_cast<int>(tile_index) % game::tile_chunk::dimensions.x, static_cast<int>(tile_index) / game::tile_chunk::dimensions.x};
+                auto const screen_coords = chunk_screen_position + element_multiply(chunk_coords, game::tile::dimensions);
+
+                SDL_Rect const texture_rect{
+                    tileset_coords.x, 
+                    tileset_coords.y,
+                    game::tile::dimensions.x,
+                    game::tile::dimensions.y
+                };
+                SDL_Rect const screen_rect{
+                    screen_coords.x,
+                    screen_coords.y,
+                    game::tile::dimensions.x,
+                    game::tile::dimensions.y
+                };
+                SDL_RenderCopy(&renderer, tileset.get_texture(), &texture_rect, &screen_rect);
+            }
+        }
+    }
+
 
     void run_loop(command_args const& args) {
         // Init
         sdl_video_resources const video = initialize_sdl_video(args);
         auto const renderer = video.renderer.get();
         game_data game = load_game_data();
-
-        SDL_Texture* tileset = IMG_LoadTexture(renderer, "res/test_tileset.png");
-        KT_SDL_FAILURE_IF(tileset == nullptr);
+        auto tilesets = load_tilesets(game.map.tilesets, *video.renderer);
 
         bool quit = false;
         while(!quit) {
@@ -85,6 +141,13 @@ namespace {
 
             // Render
             KT_SDL_ENSURE(SDL_RenderClear(renderer));
+
+            for(game::layer const& layer : game.map.layers) {
+                if(layer.get_type() == game::layer::type::tile) {
+                    render_tile_layer(std::get<game::layer::tile_data>(layer.data), tilesets.front(), *renderer);
+                }
+            }
+
             SDL_RenderPresent(renderer);
         }
     }

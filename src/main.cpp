@@ -147,7 +147,9 @@ namespace {
             while(SDL_PollEvent(&e)) {
                 if(is_quit_event(e)) {
                     quit = true;
-                }
+				} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F2) {
+					game = load_game_data(args);
+				}
             }
 
             // Update

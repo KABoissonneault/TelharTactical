@@ -1,6 +1,8 @@
 #include "sdl/resource.h"
 #include "sdl/macro.h"
+
 #include "command_args.h"
+#include "config_args.h"
 
 #include "game/map.h"
 #include "serial/tiled.h"
@@ -9,13 +11,24 @@
 #include <SDL_image.h>
 
 #include <fmt/format.h>
+#include <FMT/ostream.h>
 
 #include <gsl/gsl_util>
 #include <cstdio>
 #include <fstream>
 #include <map>
+#include <filesystem>
 
 namespace {
+    struct program_args {
+        command_args cmd;
+        config_args cfg;
+    };
+
+    auto get_resource_path(program_args const& args) -> std::filesystem::path {
+        return args.cfg.resource_config.path.value_or("res");
+    }
+
     void print_video_drivers() {
         int const num_video_drivers = SDL_GetNumVideoDrivers();
         if(num_video_drivers < 0) {
@@ -33,8 +46,8 @@ namespace {
         sdl::unique_renderer renderer;
     };
 
-    auto initialize_sdl_video(command_args const& args) -> sdl_video_resources {
-        auto const window_size = args.window_size.value_or(math::vector2i{1280, 720});
+    auto initialize_sdl_video(program_args const& args) -> sdl_video_resources {
+        auto const window_size = args.cmd.window_size.value_or(math::vector2i{1280, 720});
         SDL_Window* window;
         SDL_Renderer* renderer;
         KT_SDL_ENSURE(SDL_CreateWindowAndRenderer(window_size.x, window_size.y, SDL_WINDOW_RESIZABLE, &window, &renderer));
@@ -45,8 +58,8 @@ namespace {
         game::map map;
     };
 
-    auto load_game_data() -> game_data {
-        std::ifstream map("res/test_infinite_map.json");
+    auto load_game_data(program_args const& args) -> game_data {
+        std::ifstream map(get_resource_path(args) / "test_infinite_map.json");
         if(!map) {
             throw std::runtime_error("Could not open 'res/test_infinite_map.json'");
         }
@@ -59,10 +72,11 @@ namespace {
         return game_data{*std::move(map_result)};
     }
 
-    auto load_tilesets(gsl::span<game::tileset const> tilesets, SDL_Renderer & renderer) -> std::vector<sdl::texture> {
+    auto load_tilesets(program_args const& args, gsl::span<game::tileset const> tilesets, SDL_Renderer & renderer) -> std::vector<sdl::texture> {
+        auto const resource_path = get_resource_path(args);
         std::vector<sdl::texture> textures;
         for(game::tileset const& tileset : tilesets) {
-            auto const tiled_tileset = "res/" + tileset.source;
+            auto const tiled_tileset = resource_path / tileset.source;
             auto tiled_data = std::ifstream(tiled_tileset);
             if(!tiled_data) {
                 throw std::runtime_error(fmt::format("Failed to load Tiled tileset '{}'", tiled_tileset));
@@ -72,8 +86,8 @@ namespace {
                 throw std::runtime_error(fmt::format("Could not find image data in Tiled tileset '{}': {}", tiled_tileset, result.error().description));
             }
             auto const& texture_path = *result;
-            auto const path = "res/" + texture_path;
-            auto const texture = IMG_LoadTexture(&renderer, path.c_str());
+            auto const path = resource_path / texture_path;
+            auto const texture = IMG_LoadTexture(&renderer, path.string().c_str());
             if(texture == nullptr) {
                 throw std::runtime_error(fmt::format("Failed to load tileset '{}'", path));
             }
@@ -119,13 +133,12 @@ namespace {
         }
     }
 
-
-    void run_loop(command_args const& args) {
+    void run_loop(program_args const& args) {
         // Init
         sdl_video_resources const video = initialize_sdl_video(args);
         auto const renderer = video.renderer.get();
-        game_data game = load_game_data();
-        auto tilesets = load_tilesets(game.map.tilesets, *video.renderer);
+        game_data game = load_game_data(args);
+        auto tilesets = load_tilesets(args, game.map.tilesets, *video.renderer);
 
         bool quit = false;
         while(!quit) {
@@ -158,7 +171,20 @@ int main(int argc, char** argv) try {
         std::printf("Arg %d: %s\n", i, argv[i]);
     }
 
-    command_args const args = parse_args({argv, argc});
+    program_args const args{
+        parse_args({argv, argc}),
+        [] () -> config_args {
+            std::ifstream config_file("config.ini");
+            if(!config_file.is_open()) {
+                return {};
+            }
+            auto result = parse_config_args(config_file);
+            if(!result) {
+                throw std::runtime_error(fmt::format("Invalid config file: {}", result.error().description));
+            }
+            return std::move(*result);
+        }()
+    };
 
     KT_SDL_ENSURE(SDL_Init(SDL_INIT_VIDEO));
     auto const sdl_destroy = gsl::finally(&SDL_Quit);
@@ -166,7 +192,7 @@ int main(int argc, char** argv) try {
     KT_SDL_ENSURE(IMG_Init(IMG_INIT_PNG));
     auto const img_destroy = gsl::finally(&IMG_Quit);
 
-    if(args.print_video_drivers) {
+    if(args.cmd.print_video_drivers) {
         print_video_drivers();
     }
 

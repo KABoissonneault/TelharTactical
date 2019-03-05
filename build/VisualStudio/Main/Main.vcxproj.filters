@@ -21,9 +21,15 @@
     <ClCompile Include="..\..\..\src\command_args.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\config_args.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\command_args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\config_args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

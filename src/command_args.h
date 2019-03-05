@@ -10,4 +10,4 @@ struct command_args {
     bool print_video_drivers = false;
 };
 
-auto parse_args(gsl::span<char const* const> args)->command_args;
+auto parse_args(gsl::span<char const* const> args) -> command_args;

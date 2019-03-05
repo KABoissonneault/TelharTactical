@@ -17,8 +17,8 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SDLDir)bin\$(Platform)\$(Configuration)\SDL2.dll $(OutputPath) /D
-%(Command)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

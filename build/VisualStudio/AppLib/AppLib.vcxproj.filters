@@ -42,6 +42,9 @@
     <ClInclude Include="..\..\..\src\serial\tiled.h">
       <Filter>Header Files\serial</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\serial\config.h">
+      <Filter>Header Files\serial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\sdl\resource.cpp">
@@ -51,6 +54,9 @@
       <Filter>Source Files\sdl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\serial\tiled.cpp">
+      <Filter>Source Files\serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\serial\config.cpp">
       <Filter>Source Files\serial</Filter>
     </ClCompile>
   </ItemGroup>

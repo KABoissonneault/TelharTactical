@@ -24,5 +24,8 @@
     <ClCompile Include="..\..\..\test\src\serial\tiled.cpp">
       <Filter>Source Files\serial</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\src\serial\config.cpp">
+      <Filter>Source Files\serial</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

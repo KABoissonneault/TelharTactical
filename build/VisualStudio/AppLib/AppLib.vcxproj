@@ -40,12 +40,14 @@
     <Import Project="..\ProjectRoot.props" />
     <Import Project="..\SDL.props" />
     <Import Project="..\fmt.props" />
+    <Import Project="..\GSL.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\ProjectRoot.props" />
     <Import Project="..\SDL.props" />
     <Import Project="..\fmt.props" />
+    <Import Project="..\GSL.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -84,11 +86,13 @@
     <ClInclude Include="..\..\..\src\sdl\resource.h" />
     <ClInclude Include="..\..\..\src\sdl\texture.h" />
     <ClInclude Include="..\..\..\src\serial\error.h" />
+    <ClInclude Include="..\..\..\src\serial\config.h" />
     <ClInclude Include="..\..\..\src\serial\tiled.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\sdl\resource.cpp" />
     <ClCompile Include="..\..\..\src\sdl\texture.cpp" />
+    <ClCompile Include="..\..\..\src\serial\config.cpp" />
     <ClCompile Include="..\..\..\src\serial\tiled.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

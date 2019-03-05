@@ -25,8 +25,12 @@ namespace {
         config_args cfg;
     };
 
+	gsl::cstring_span<> const resource_section = "resource";
+	gsl::cstring_span<> const path_key = "path";
+
     auto get_resource_path(program_args const& args) -> std::filesystem::path {
-        return args.cfg.resource_config.path.value_or("res");
+        auto const path = args.cfg.get_value(resource_section, path_key).value_or("res");
+		return {path.begin(), path.end()};
     }
 
     void print_video_drivers() {

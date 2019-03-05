@@ -11,13 +11,20 @@
 #include <SDL_image.h>
 
 #include <fmt/format.h>
-#include <FMT/ostream.h>
+#include <fmt/ostream.h>
 
 #include <gsl/gsl_util>
+#include <gsl/string_span>
 #include <cstdio>
 #include <fstream>
 #include <map>
 #include <filesystem>
+
+namespace gsl {
+	std::ostream& operator<<(std::ostream & o, gsl::cstring_span<> s) {
+		return o.write(s.data(), s.size());
+	}
+}
 
 namespace {
     struct program_args {
@@ -27,6 +34,9 @@ namespace {
 
 	gsl::cstring_span<> const resource_section = "resource";
 	gsl::cstring_span<> const path_key = "path";
+
+	gsl::cstring_span<> const game_section = "game";
+	gsl::cstring_span<> const default_map_key = "default_map";
 
     auto get_resource_path(program_args const& args) -> std::filesystem::path {
         auto const path = args.cfg.get_value(resource_section, path_key).value_or("res");
@@ -63,14 +73,21 @@ namespace {
     };
 
     auto load_game_data(program_args const& args) -> game_data {
-        std::ifstream map(get_resource_path(args) / "test_infinite_map.json");
+		auto const maybe_start_map = args.cfg.get_value(game_section, default_map_key);
+		if(!maybe_start_map) {
+			return {};
+		}
+		auto const start_map = *maybe_start_map;
+
+		auto const path = get_resource_path(args).append(start_map.begin(), start_map.end());
+        std::ifstream map(path);
         if(!map) {
-            throw std::runtime_error("Could not open 'res/test_infinite_map.json'");
+            throw std::runtime_error(fmt::format("Could not open '{}'", path));
         }
 
         auto map_result = serial::load_tiled_json(map);
         if(!map_result) {
-            throw std::runtime_error(fmt::format("Failed to load 'res/test_infinite_map.json' Tiled map: {}", map_result.error().description));
+            throw std::runtime_error(fmt::format("Failed to load '{}' Tiled map: {}", start_map, map_result.error().description));
         }
 
         return game_data{*std::move(map_result)};

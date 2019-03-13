@@ -98,6 +98,9 @@
     <ClInclude Include="..\..\..\src\game\tile.h" />
     <ClInclude Include="..\..\..\src\math\vector2.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\game\map.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

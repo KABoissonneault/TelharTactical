@@ -157,7 +157,12 @@ namespace serial {
                 return invalid_argument("Invalid 'source' field in tileset");
             }
 
-            return game::tileset{*source};
+			auto const firstgid = tileset.find("firstgid");
+			if(firstgid == tileset.end() || !firstgid->is_number()) {
+				return invalid_argument("Invalid 'firstgid' field in tileset");
+			}
+			
+            return game::tileset{*source, *firstgid};
         }
 
         auto parse_map(nlohmann::json const& json) -> tl::expected<game::map, error> {

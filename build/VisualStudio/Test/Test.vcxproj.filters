@@ -16,6 +16,9 @@
     <Filter Include="Source Files\serial">
       <UniqueIdentifier>{237b8e98-ad48-4819-a2d6-7a87fa1b1b7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\serial">
+      <UniqueIdentifier>{f42977af-f53e-4996-9007-8a7d041e9078}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\src\main.cpp">
@@ -27,5 +30,10 @@
     <ClCompile Include="..\..\..\test\src\serial\config.cpp">
       <Filter>Source Files\serial</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\test\src\serial\test_tiled_map.h">
+      <Filter>Header Files\serial</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,5 +32,8 @@
     <ClInclude Include="..\..\..\src\config_args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\algorithm_extra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -90,12 +90,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\command_args.cpp" />
     <ClCompile Include="..\..\..\src\config_args.cpp" />
+    <ClCompile Include="..\..\..\src\game_data.cpp" />
     <ClCompile Include="..\..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\algorithm_extra.h" />
     <ClInclude Include="..\..\..\src\command_args.h" />
     <ClInclude Include="..\..\..\src\config_args.h" />
+    <ClInclude Include="..\..\..\src\game_data.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AppLib\AppLib.vcxproj">

@@ -15,7 +15,7 @@ TEST_CASE("INI Config file", "[serial]") {
     ss << "key4=value4" << "\n";
 
     int i = 0;
-    auto const result = serial::parse_config(ss, [] (gsl::cstring_span<> section, gsl::cstring_span<> key, gsl::cstring_span<> value, void* user_data) {
+    auto const result = serial::parse_config(ss, [] (std::string_view section, std::string_view key, std::string_view value, void* user_data) {
         int & counter = *static_cast<int*>(user_data);
         switch(counter) {
             case 0:

@@ -19,18 +19,18 @@ namespace serial {
         int line_count = 0;
         while(std::getline(file, line)) {
             ++line_count;
-            auto const line_view = gsl::cstring_span<>(line);
+            auto const line_view = std::string_view(line);
             if(line_view.empty() || line_view[0] == ';') {
                 continue;
             } else if(line_view[0] == '[') {
-                section = to_string(line_view.subspan(1, line.size() - 2));
+                section = line_view.substr(1, line.size() - 2);
             } else {
                 auto const it_key_end = std::find(line_view.begin(), line_view.end(), '=');
                 if(it_key_end == line_view.end()) {
                     return invalid_argument(fmt::format("Error on line {}: invalid property", line_count));
                 }
-                gsl::cstring_span<> const key(line_view.data(), &*it_key_end);
-                gsl::cstring_span<> const value(&*(it_key_end + 1), line_view.data() + line_view.size());
+                std::string_view const key(line_view.data(), std::distance(line_view.begin(), it_key_end));
+                std::string_view const value(&*(it_key_end + 1), std::distance(it_key_end + 1, line_view.end()));
                 handler(section, key, value, user_data);
             }
         }

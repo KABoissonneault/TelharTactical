@@ -141,6 +141,14 @@ void game_data::run() {
 			} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_F2) {
 				map = load_default_map(cfg);
 				texture_bank = load_texture_bank(cfg, map.tilesets, *renderer, std::move(texture_bank));
+			} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_LEFT) {
+				screen_pixel_offset += math::vector2i{game::tile::dimensions.x, 0};
+			} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_RIGHT) {
+				screen_pixel_offset += math::vector2i{-game::tile::dimensions.x, 0};
+			} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_UP) {
+				screen_pixel_offset += math::vector2i{0, game::tile::dimensions.y};
+			} else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_DOWN) {
+				screen_pixel_offset += math::vector2i{0, -game::tile::dimensions.y};
 			}
 		}
 
@@ -180,7 +188,7 @@ void game_data::render_tile_layer(game::layer::tile_data const& tiles) {
 			auto const tileset_coords = element_multiply(math::vector2i{tileset_key % tileset_tile_width, tileset_key / tileset_tile_width}, game::tile::dimensions);
 
 			auto const chunk_coords = math::vector2i{static_cast<int>(tile_index) % game::tile_chunk::dimensions.x, static_cast<int>(tile_index) / game::tile_chunk::dimensions.x};
-			auto const screen_coords = chunk_screen_position + element_multiply(chunk_coords, game::tile::dimensions);
+			auto const screen_coords = screen_pixel_offset + chunk_screen_position + element_multiply(chunk_coords, game::tile::dimensions);
 
 			SDL_Rect const texture_rect{
 				tileset_coords.x,

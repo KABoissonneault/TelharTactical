@@ -6,6 +6,7 @@
 #include "game/map.h"
 #include "sdl/texture.h"
 #include "sdl/resource.h"
+#include "math/vector2.h"
 
 #include <map>
 
@@ -22,6 +23,7 @@ private:
 	sdl::unique_renderer renderer;
 	game::map map;
 	std::map<std::string, sdl::texture> texture_bank;
+	math::vector2i screen_pixel_offset{0, 0};
 
 	void render_tile_layer(game::layer::tile_data const& tiles);
 };

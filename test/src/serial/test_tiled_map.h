@@ -2,7 +2,7 @@
 
 #include <string_view>
 
-const std::string_view test_tiled_map{
+std::string_view const test_tiled_map{
 	R"(
 { "height":16,
  "infinite":true,

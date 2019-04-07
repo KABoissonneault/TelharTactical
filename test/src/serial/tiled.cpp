@@ -2,6 +2,7 @@
 
 #include <serial/tiled.h>
 #include "serial/test_tiled_map.h"
+#include "serial/test_tileset.h"
 
 #include <sstream>
 #include <fstream>
@@ -49,10 +50,11 @@ TEST_CASE("Tiled valid map", "[serial]") {
 }
 
 TEST_CASE("Tiled valid tileset", "[serial]") {
-    std::fstream fs("res/test_tileset.json");
-    REQUIRE(fs);
+	std::stringstream ss;
+	ss << test_tileset;
+    REQUIRE(ss);
 
-    auto const result = serial::get_tiled_tileset_image(fs);
+    auto const result = serial::get_tiled_tileset_image(ss);
     REQUIRE(result);
 
     auto const& image_file = *result;

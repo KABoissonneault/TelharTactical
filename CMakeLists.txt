@@ -88,3 +88,19 @@ target_include_directories(Main PRIVATE "${PROJECT_SOURCE_DIR}/ext/gsl/include")
 target_include_directories(Main PRIVATE "${PROJECT_SOURCE_DIR}/ext/fmt/include")
 
 source_group(TREE "${PROJECT_SOURCE_DIR}" FILES ${MAIN_SRC})
+
+#Tests
+set(APPTEST_SRC
+	test/src/main.cpp
+	test/src/serial/config.cpp
+	test/src/serial/tiled.cpp
+	test/src/serial/test_tiled_map.h
+	)
+	
+add_executable(AppTest ${APPTEST_SRC})
+
+target_include_directories(AppTest PRIVATE "${PROJECT_SOURCE_DIR}/test/ext/include")
+target_include_directories(AppTest PRIVATE "${PROJECT_SOURCE_DIR}/test/src")
+
+target_link_libraries(AppTest APPLIB)
+target_link_libraries(AppTest SDL2::SDL2main)

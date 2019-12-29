@@ -2,6 +2,8 @@
 
 #include "layer.h"
 
+#include <string>
+
 namespace game {
     struct tileset {
         std::string source;

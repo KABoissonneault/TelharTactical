@@ -24,7 +24,7 @@ auto parse_window_size(gsl::span<char const* const> args) -> math::vector2i {
 
 auto parse_args(gsl::span<char const* const> args) -> command_args {
     command_args result;
-    for(int i = 0; i < args.size(); ++i) {
+    for(std::ptrdiff_t i = 0; i < args.size(); ++i) {
         std::string_view const arg = args[i];
         if(arg == "--window-size") {
             result.window_size = parse_window_size(args.subspan(i + 1));

@@ -84,30 +84,46 @@ namespace serial {
             return result;
         }
 
+        auto parse_tile_layer_data(nlohmann::json const& tile_layer) -> tl::expected<game::layer::tile_data, error> {
+            auto chunks_result = parse_range(tile_layer, "chunks", parse_tile_chunk);
+            if (!chunks_result) {
+                return tl::make_unexpected(chunks_result.error());
+            }
+
+            return game::layer::tile_data{ *std::move(chunks_result) };
+        }
+    	
         auto parse_layer(nlohmann::json const& layer) -> tl::expected<game::layer, error> {
             if(!layer.is_object()) {
                 return invalid_argument("Layer not a valid Layer object");
             }
 
             auto const type = layer.find("type");
-            if(type == layer.end() || *type != "tilelayer") {
-                return invalid_argument("Layer not a tile layer");
+            if(type == layer.end()) {
+                return invalid_argument("Layer not a valid Layer object");
             }
-
+        	
             auto const id = layer.find("id");
             if(id == layer.end() || !id->is_number_integer()) {
                 return invalid_argument("Layer had invalid id");
             }
-           
+
+            game::layer ret;
+            ret.id = *id;           
+
             // Might handle more layers eventually
-            assert(*type == "tilelayer");
-            
-            auto const chunks_result = parse_range(layer, "chunks", parse_tile_chunk);
-            if(!chunks_result) {
-                return tl::make_unexpected(chunks_result.error());
+            if (*type == "tilelayer") {
+                auto tile_data = parse_tile_layer_data(layer);
+            	if(!tile_data) {
+                    return tl::make_unexpected(tile_data.error());
+            	}
+
+                ret.data = *tile_data;
+            } else {
+                return invalid_argument(fmt::format("Layer type '{}' invalid or not supported.", *type));
             }
 
-            return game::layer{*id, game::layer::tile_data{*chunks_result}};
+            return ret;
         }
 
         auto sanitize_map(nlohmann::json const& json) -> tl::expected<nlohmann::json, error> {

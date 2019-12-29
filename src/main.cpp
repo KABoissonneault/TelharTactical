@@ -23,19 +23,21 @@ int main(int argc, char** argv) try {
 	KT_SDL_ENSURE(IMG_Init(IMG_INIT_PNG));
 	auto const img_destroy = gsl::finally(&IMG_Quit);
 
+    config_args conf = []() -> config_args {
+        std::ifstream config_file("config.ini");
+        if (!config_file.is_open()) {
+            return {};
+        }
+        auto result = parse_config_args(config_file);
+        if (!result) {
+            throw std::runtime_error(fmt::format("Invalid config file: {}", result.error().description));
+        }
+        return std::move(*result);
+    }();
+	
     game_data game{
         parse_args({argv, argc}),
-        [] () -> config_args {
-            std::ifstream config_file("config.ini");
-            if(!config_file.is_open()) {
-                return {};
-            }
-            auto result = parse_config_args(config_file);
-            if(!result) {
-                throw std::runtime_error(fmt::format("Invalid config file: {}", result.error().description));
-            }
-            return std::move(*result);
-        }()
+        std::move(conf)
     };
 
 	game.run();

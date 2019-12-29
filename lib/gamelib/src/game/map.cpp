@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <utility>
 
+#include <stdexcept>
+
 namespace game {
 	auto get_tileset(map & map_data, tile::id id) -> tileset& {
 		return const_cast<tileset&>(get_tileset(std::as_const(map_data), id));

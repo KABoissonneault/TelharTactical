@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TelharTactical", "TelharTactical.vcxproj", "{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gamelib", "gamelib\gamelib.vcxproj", "{F675270B-053C-4418-809C-B29469168405}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D2DBF1A0-81F5-4208-A611-DC4A43265172}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TelharTest", "TelharTest\TelharTest.vcxproj", "{1C2070A1-3323-445B-9F9B-40B2B9F246E8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "applib", "applib\applib.vcxproj", "{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Debug|x64.ActiveCfg = Debug|x64
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Debug|x64.Build.0 = Debug|x64
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Debug|x86.ActiveCfg = Debug|Win32
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Debug|x86.Build.0 = Debug|Win32
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Release|x64.ActiveCfg = Release|x64
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Release|x64.Build.0 = Release|x64
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Release|x86.ActiveCfg = Release|Win32
+		{A328DBE9-0CD7-4814-AC6F-28E25B9E1922}.Release|x86.Build.0 = Release|Win32
+		{F675270B-053C-4418-809C-B29469168405}.Debug|x64.ActiveCfg = Debug|x64
+		{F675270B-053C-4418-809C-B29469168405}.Debug|x64.Build.0 = Debug|x64
+		{F675270B-053C-4418-809C-B29469168405}.Debug|x86.ActiveCfg = Debug|Win32
+		{F675270B-053C-4418-809C-B29469168405}.Debug|x86.Build.0 = Debug|Win32
+		{F675270B-053C-4418-809C-B29469168405}.Release|x64.ActiveCfg = Release|x64
+		{F675270B-053C-4418-809C-B29469168405}.Release|x64.Build.0 = Release|x64
+		{F675270B-053C-4418-809C-B29469168405}.Release|x86.ActiveCfg = Release|Win32
+		{F675270B-053C-4418-809C-B29469168405}.Release|x86.Build.0 = Release|Win32
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Debug|x64.ActiveCfg = Debug|x64
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Debug|x64.Build.0 = Debug|x64
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Debug|x86.ActiveCfg = Debug|Win32
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Debug|x86.Build.0 = Debug|Win32
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Release|x64.ActiveCfg = Release|x64
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Release|x64.Build.0 = Release|x64
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Release|x86.ActiveCfg = Release|Win32
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8}.Release|x86.Build.0 = Release|Win32
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Debug|x64.ActiveCfg = Debug|x64
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Debug|x64.Build.0 = Debug|x64
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Debug|x86.ActiveCfg = Debug|Win32
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Debug|x86.Build.0 = Debug|Win32
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Release|x64.ActiveCfg = Release|x64
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Release|x64.Build.0 = Release|x64
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Release|x86.ActiveCfg = Release|Win32
+		{7C2EAE26-A4EA-4CC5-A34E-2AC2DC0FBD92}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1C2070A1-3323-445B-9F9B-40B2B9F246E8} = {D2DBF1A0-81F5-4208-A611-DC4A43265172}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1B261BF-7C81-4BE1-8836-90B629227072}
+	EndGlobalSection
+EndGlobal

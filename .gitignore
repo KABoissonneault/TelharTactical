@@ -7,3 +7,8 @@ build/VisualStudio/Test/x64/
 build/VisualStudio/res/
 build/VisualStudio/AppLib/x64/
 build/
+build_vs/.vs/
+build_vs/applib/x64/
+build_vs/gamelib/x64/
+build_vs/TelharTest/x64/
+build_vs/x64/

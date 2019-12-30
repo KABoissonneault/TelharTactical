@@ -11,14 +11,21 @@ The project aims to use other libraries as much as possible wherever it makes se
 Collection of generic game components, used for modeling and updating the game simulation
 This module has no awareness of media (graphics, sound), I/O (networking, files), or system resources (memory allocation, threading). Such things should be done externally, by the module using GameLib
 This means that Game entities will have no audio or visual  components attached to them - at least not directly
+#### Dependencies
+Public: C++ Standard Library
 ### AppLib
 Collection of components which handle Application logic in a generic way, without necessarily dictating how they are used
 While the module is aware of media, I/O, or system resources, it should not allocate or in any way force their use internally. 
+#### Dependencies
+Public: C++ Standard Library, expected
+Private: SDL, fmt, nlohmann JSON
 ### Main
 The actual Application, which will result in an executable binary.
 All system resources and I/O should be allocated and managed from this module only.
 Configuration and command arguments should be processed and acted upon only in this module.
 The application will then run a game simulation on a given map, listen to user input, update the simulation, and render it to a window.
+#### Dependencies
+AppLib, GameLib, C++ Standard Library, GSL, expected
 		
 ## Design Choices
 ### Maps

@@ -114,10 +114,11 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ExtRoot)SDL\bin\$(Platform)\$(Configuration);$(ExtRoot)SDL\bin\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform) zlib1.dll LICENSE.zlib.txt libfreetype-6.dll LICENSE.freetype.txt SDL2_ttf.dll</Command>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform) libfreetype-6.dll LICENSE.freetype.txt libjpeg-9.dll LICENSE.jpeg.txt libpng16-16.dll LICENSE.png.txt libtiff-5.dll LICENSE.tiff.txt libwebp-7.dll LICENSE.webp.txt SDL2_ttf.dll zlib1.dll LICENSE.zlib.txt
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb SDL2_image.dll SDL2_image.pdb</Command>
       <Message>Copying project dependencies</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -154,10 +155,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ExtRoot)SDL\bin\$(Platform)\$(Configuration);$(ExtRoot)SDL\bin\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform) zlib1.dll LICENSE.zlib.txt libfreetype-6.dll LICENSE.freetype.txt SDL2_ttf.dll</Command>
+      <Command>powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform) libfreetype-6.dll LICENSE.freetype.txt libjpeg-9.dll LICENSE.jpeg.txt libpng16-16.dll LICENSE.png.txt libtiff-5.dll LICENSE.tiff.txt libwebp-7.dll LICENSE.webp.txt SDL2_ttf.dll zlib1.dll LICENSE.zlib.txt
+powershell -ExecutionPolicy Unrestricted $(SolutionDir)CopyDependencies.ps1 $(OutputPath) $(ExtRoot)SDL\bin\$(Platform)\$(Configuration) SDL2.dll SDL2.pdb SDL2_image.dll SDL2_image.pdb</Command>
       <Message>Copying project dependencies</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>

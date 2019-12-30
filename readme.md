@@ -7,6 +7,7 @@ This means no custom editor, only one target architecture (x64 Windows), and no 
 The project aims to use other libraries as much as possible wherever it makes sense. For example, the project uses SDL for handling much media requirements (rendering, windows, input, sound, image loading, etc...). However, the project should aim to minimize the use of intrusive frameworks.
 	
 ## Modules
+This section describes the various modules found in their project, including their purpose, constraints, and dependencies. Private dependencies refer to dependencies that are required for compiling, linking, and running a program using the module. Public dependencies refer to dependencies which in addition to the private requirements, also require users of the module to be able to include the headers of that dependency to use the module.
 ### GameLib
 Collection of generic game components, used for modeling and updating the game simulation
 This module has no awareness of media (graphics, sound), I/O (networking, files), or system resources (memory allocation, threading). Such things should be done externally, by the module using GameLib
@@ -26,6 +27,13 @@ Configuration and command arguments should be processed and acted upon only in t
 The application will then run a game simulation on a given map, listen to user input, update the simulation, and render it to a window.
 #### Dependencies
 AppLib, GameLib, C++ Standard Library, GSL, expected
+
+### Extra Dependencies
+This section describes the current "extra" requirements due indirect dependencies by third party libraries.
+#### SDL_image
+SDL2, libjpeg-9 (with license), libpng16-16 (with license), libtiff-5 (with license), libwebp-7 (with license), zlib1 (with license)
+#### SDL_ttf
+SDL2, libfreetype-6 (with license), zlib1 (with license)
 		
 ## Design Choices
 ### Maps

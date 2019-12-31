@@ -126,6 +126,7 @@
     <ClInclude Include="..\..\lib\applib\include\sdl\macro.h" />
     <ClInclude Include="..\..\lib\applib\include\sdl\resource.h" />
     <ClInclude Include="..\..\lib\applib\include\sdl\texture.h" />
+    <ClInclude Include="..\..\lib\applib\include\sdl\ttf.h" />
     <ClInclude Include="..\..\lib\applib\include\serial\config.h" />
     <ClInclude Include="..\..\lib\applib\include\serial\error.h" />
     <ClInclude Include="..\..\lib\applib\include\serial\tiled.h" />
@@ -133,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\lib\applib\src\sdl\resource.cpp" />
     <ClCompile Include="..\..\lib\applib\src\sdl\texture.cpp" />
+    <ClCompile Include="..\..\lib\applib\src\sdl\ttf.cpp" />
     <ClCompile Include="..\..\lib\applib\src\serial\config.cpp" />
     <ClCompile Include="..\..\lib\applib\src\serial\tiled.cpp" />
   </ItemGroup>

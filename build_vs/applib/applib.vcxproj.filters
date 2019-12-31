@@ -45,6 +45,9 @@
     <ClInclude Include="..\..\lib\applib\include\sdl\texture.h">
       <Filter>Header Files\sdl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\applib\include\sdl\ttf.h">
+      <Filter>Header Files\sdl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\lib\applib\src\serial\config.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files\sdl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\applib\src\sdl\texture.cpp">
+      <Filter>Source Files\sdl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\applib\src\sdl\ttf.cpp">
       <Filter>Source Files\sdl</Filter>
     </ClCompile>
   </ItemGroup>

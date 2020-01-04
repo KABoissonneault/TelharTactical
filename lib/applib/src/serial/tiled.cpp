@@ -49,6 +49,86 @@ namespace serial {
             return parse_range(*field, f);
         }
 
+        auto parse_integer(nlohmann::json const& json, std::string_view field) -> tl::expected<int, error> {
+            auto const field_value = json.find(field);
+        	if(field_value == json.end()) {
+                return invalid_argument(fmt::format("Could not find field '{}'", field));
+        	}
+        	if(!field_value->is_number_integer()) {
+                return invalid_argument(fmt::format("Field '{}' was not an integer", field));
+            }
+        	return static_cast<int>(*field_value);
+        }
+
+    	auto parse_integer_default(nlohmann::json const& json, std::string_view field, int default_value) -> int {
+            auto const field_value = json.find(field);
+        	if(field_value == json.end() || !field_value->is_number_integer()) {
+                return default_value;
+        	}
+            return *field_value;
+        }
+
+        auto parse_float(nlohmann::json const& json, std::string_view field) -> tl::expected<double, error> {
+            auto const field_value = json.find(field);
+            if (field_value == json.end()) {
+                return invalid_argument(fmt::format("Could not find field '{}'", field));
+            }
+            if (!field_value->is_number_float()) {
+                if (field_value->is_number_integer()) {
+                    return static_cast<double>(*field_value);
+                }
+                return invalid_argument(fmt::format("Field '{}' was not a float", field));
+            }
+            return static_cast<double>(*field_value);
+        }
+
+        auto parse_float_default(nlohmann::json const& json, std::string_view field, double default_value) -> double {
+            auto const field_value = json.find(field);
+            if (field_value == json.end() || !(field_value->is_number_float() || field_value->is_number_integer())) {
+                return default_value;
+            }
+            return *field_value;
+        }
+
+        auto parse_boolean(nlohmann::json const& json, std::string_view field) -> tl::expected<bool, error> {
+            auto const field_value = json.find(field);
+            if (field_value == json.end()) {
+                return invalid_argument(fmt::format("Could not find field '{}'", field));
+            }
+            if (!field_value->is_boolean()) {
+                return invalid_argument(fmt::format("Field '{}' was not a boolean", field));
+            }
+            return static_cast<bool>(*field_value);
+        }
+
+        auto parse_boolean_default(nlohmann::json const& json, std::string_view field, bool default_value) -> bool {
+            auto const field_value = json.find(field);
+            if (field_value == json.end() || !field_value->is_boolean()) {
+                return default_value;
+            }
+            return *field_value;
+        }
+    	
+        auto parse_string(nlohmann::json const& json, std::string_view field) -> tl::expected<std::string, error> {
+            auto const field_value = json.find(field);
+            if (field_value == json.end()) {
+                return invalid_argument(fmt::format("Could not find field '{}'", field));
+            } 
+            if (!field_value->is_string()) {
+                return invalid_argument(fmt::format("Field '{}' was not a string", field));
+            }
+        	return static_cast<std::string>(*field_value);
+        }
+
+    	template<typename String>
+        auto parse_string_default(nlohmann::json const& json, std::string_view field, String&& default_value) -> std::string {
+            auto const field_value = json.find(field);
+            if (field_value == json.end() || !field_value->is_string()) {
+                return std::string(std::forward<String>(default_value));
+            }
+            return static_cast<std::string>(*field_value);
+        }
+    	
         auto parse_tile_chunk(nlohmann::json const& chunk) -> tl::expected<game::tile_chunk, error> {
             auto const width = chunk.find("width");
             auto const height = chunk.find("height");
@@ -92,6 +172,122 @@ namespace serial {
 
             return game::layer::tile_data{ *std::move(chunks_result) };
         }
+
+    	// parses a #RRGGBB or #AARRGGBB color string into a RGBA32 structure
+        auto parse_color(std::string_view color_hex) -> tl::expected<game::rgba32_color, error> {
+            if(!(color_hex.size() == 7 || color_hex.size() == 9) || color_hex[0] != '#') {
+                return invalid_argument(fmt::format("String was not a valid color string: \"{}\"", color_hex));
+            }
+
+            game::rgba32_color color;
+        	if (color_hex.size() == 7) { // #RRGGBB string
+                int const parsed = std::sscanf(color_hex.data(), "#%2hhx%2hhx%2hhx", &color.r, &color.g, &color.b);
+                if (parsed != 3) {
+                    return invalid_argument(fmt::format("String was not a valid color string: \"{}\"", color_hex));
+                }
+                color.a = 0xFF;
+            } else { // #AARRGGBB
+                int const parsed = std::sscanf(color_hex.data(), "#%2hhx%2hhx%2hhx%2hhx", &color.a, &color.r, &color.g, &color.b);
+                if (parsed != 4) {
+                    return invalid_argument(fmt::format("String was not a valid color string: \"{}\"", color_hex));
+                }
+            }
+
+            return color;
+        }
+
+    	// Default values derived from: https://doc.mapeditor.org/en/stable/reference/json-map-format/#text
+        auto parse_object_text_data(nlohmann::json const& text_field) -> tl::expected<game::text_data, error> {
+            game::text_data data;
+            data.text = parse_string_default(text_field, "text", "");
+
+            {
+                std::string const color_hex = parse_string_default(text_field, "color", "#000000");
+                auto const color_result = parse_color(color_hex);
+                if (!color_result) {
+                    return tl::make_unexpected(color_result.error());
+                }
+                data.color = *color_result;
+            }
+        	
+            data.font = parse_string_default(text_field, "fontfamily", "sans-serif");
+            data.point_size = parse_integer_default(text_field, "pixelsize", 16);
+
+            {
+                std::string const valign_string = parse_string_default(text_field, "valign", "top");
+                if (valign_string == "center") {
+                    data.valign = game::text_data::vertical_alignment::center;
+                } else if (valign_string == "bottom") {
+                    data.valign = game::text_data::vertical_alignment::bottom;
+                } else {
+                    data.valign = game::text_data::vertical_alignment::top;
+                }
+            }
+
+            {
+                std::string const halign_string = parse_string_default(text_field, "halign", "left");
+                if (halign_string == "center") {
+                    data.halign = game::text_data::horizontal_alignment::center;
+                } else if (halign_string == "right") {
+                    data.halign = game::text_data::horizontal_alignment::right;
+                } else if (halign_string == "justify") {
+                    data.halign = game::text_data::horizontal_alignment::justified;
+                } else {
+                    data.halign = game::text_data::horizontal_alignment::left;
+                }                
+            }
+        	
+            data.wrap = parse_boolean_default(text_field, "wrap", false);
+            data.kerning = parse_boolean_default(text_field, "kerning", true);
+            data.bold = parse_boolean_default(text_field, "bold", false);
+            data.italic = parse_boolean_default(text_field, "italic", false);
+            data.underline = parse_boolean_default(text_field, "underline", false);
+            data.strikethrough = parse_boolean_default(text_field, "strikethrough", false);
+           
+            return data;
+        }
+    	
+    	auto parse_object(nlohmann::json const& json) -> tl::expected<game::object, error> {
+            game::object object;
+
+            auto const id_result = parse_integer(json, "id");
+            if (!id_result) {
+                return tl::make_unexpected(id_result.error());
+            }
+            object.id = static_cast<game::object::identifier>(*id_result);
+        
+            object.name = parse_string_default(json, "name", "");
+            object.type = parse_string_default(json, "type", "");
+
+            object.dimensions.x = static_cast<int>(parse_float_default(json, "width", 0.0));
+            object.dimensions.y = static_cast<int>(parse_float_default(json, "height", 0.0));
+        	object.position.x = static_cast<int>(parse_float_default(json, "x", 0.0));
+            object.position.y = static_cast<int>(parse_float_default(json, "y", 0.0));
+            object.rotation = parse_float_default(json, "rotation", 0.0);
+
+        	if(auto const point_field = json.find("point"); point_field != json.end() && *point_field == true) {
+                object.kind_data = game::point_data();
+            } else if (auto const text_field = json.find("text"); text_field != json.end() && text_field->is_structured()) {
+                auto text_result = parse_object_text_data(*text_field);
+                if (!text_result) {
+                    return tl::make_unexpected(text_result.error());
+                }
+                object.kind_data = *std::move(text_result);
+            // TODO: handle other kinds
+            } else {
+                object.kind_data = game::rectangle_data();
+            }
+            return object;
+    	}
+
+        auto parse_object_layer_data(nlohmann::json const& object_layer) -> tl::expected<game::layer::object_data, error> {
+            auto objects_result = parse_range(object_layer, "objects", parse_object);
+            if (!objects_result) {
+                return tl::make_unexpected(objects_result.error());
+            }
+
+            return game::layer::object_data{ *std::move(objects_result) };
+        }
     	
         auto parse_layer(nlohmann::json const& layer) -> tl::expected<game::layer, error> {
             if(!layer.is_object()) {
@@ -111,7 +307,7 @@ namespace serial {
             game::layer ret;
             ret.id = *id;           
 
-            // Might handle more layers eventually
+        	// Handle type-specific data
             if (*type == "tilelayer") {
                 auto tile_data = parse_tile_layer_data(layer);
             	if(!tile_data) {
@@ -119,6 +315,13 @@ namespace serial {
             	}
 
                 ret.data = *tile_data;
+            } else if (*type == "objectgroup") {
+                auto object_data = parse_object_layer_data(layer);
+                if (!object_data) {
+                    return tl::make_unexpected(object_data.error());
+                }
+
+                ret.data = *object_data;
             } else {
                 return invalid_argument(fmt::format("Layer type '{}' invalid or not supported.", *type));
             }

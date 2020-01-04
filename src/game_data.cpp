@@ -29,18 +29,6 @@ namespace {
 		auto const path = cfg.get_value(resource_section, path_key).value_or("res");
 		return {path.begin(), path.end()};
 	}
-	
-	void print_video_drivers() {
-		int const num_video_drivers = SDL_GetNumVideoDrivers();
-		if(num_video_drivers < 0) {
-			std::printf("SDL Video Drivers could not be queried: %s", SDL_GetError());
-			return;
-		}
-		std::printf("Video drivers (current: '%s'):\n", SDL_GetCurrentVideoDriver());
-		for(int i = 0; i < num_video_drivers; ++i) {
-			std::printf("\t(%d) %s\n", i, SDL_GetVideoDriver(i));
-		}
-	}
 
 	auto create_window(command_args const& cmd) -> sdl::unique_window {
 		auto const window_size = cmd.window_size.value_or(math::vector2i{1280, 720});
@@ -66,6 +54,8 @@ namespace {
 		if(!map_result) {
 			throw std::runtime_error(fmt::format("Failed to load '{}' Tiled map: {}", map_name, map_result.error().description));
 		}
+
+		fmt::print("Loaded map '{}'.\n", map_name);
 
 		return *std::move(map_result);
 	}
@@ -125,9 +115,7 @@ game_data::game_data(command_args cmd, config_args cfg)
 	, renderer(create_renderer(*window))
 	, map(load_default_map(this->cfg))
 	, texture_bank(load_texture_bank(this->cfg, map.tilesets, *renderer)) {
-	if(this->cmd.print_video_drivers) {
-		print_video_drivers();
-	}
+	
 }
 
 void game_data::run() {
